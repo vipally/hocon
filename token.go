@@ -21,7 +21,7 @@ const (
 	tokenTypeArrayStart                    // [
 	tokenTypeArrayEnd                      // ]
 	tokenTypeComma                         // ,
-	tokenTypeSubstitute                    //
+	tokenTypeSubstitute                    // $
 	tokenTypeInclude                       // include
 
 	_tokenTypeNum
