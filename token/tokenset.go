@@ -1,6 +1,10 @@
 //sustom token define
 package token
 
+import (
+	"io"
+)
+
 const (
 	minTokenType           = 1
 	MaxTokenType           = 65535
@@ -90,4 +94,12 @@ func (ts *TokenSet) Name() string {
 
 func (ts *TokenSet) TokenName(token TokenType) string {
 	return ""
+}
+
+func (ts *TokenSet) NewTokenizer(filename string, reader io.Reader) *Scanner {
+	return nil
+}
+
+func (ts *TokenSet) NewTokenizerByText(text []byte) *Scanner {
+	return nil
 }
