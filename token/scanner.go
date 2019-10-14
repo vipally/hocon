@@ -8,40 +8,24 @@ import (
 	"unicode/utf8"
 )
 
+const (
+	EOF rune = -1 //end of file
+)
+
 type Token struct {
-	Type     TokenType
-	Alias    []TokenType
-	Content  string
-	Position Position
-}
-
-// A source position is represented by a Position value.
-// A position is valid if Line > 0.
-type Position struct {
-	Filename string // filename, if any
-	Offset   int    // byte offset, starting at 0
-	Line     int    // line number, starting at 1
-	Column   int    // column number, starting at 1 (character count per line)
-}
-
-// IsValid reports whether the position is valid.
-func (pos *Position) IsValid() bool { return pos.Line > 0 }
-
-func (pos Position) String() string {
-	s := pos.Filename
-	if s != "" {
-		s += ":"
-	}
-	if pos.IsValid() {
-		s = fmt.Sprintf("%s%d:%d", s, pos.Line, pos.Column)
-	}
-	return s
+	TokenPosition
+	Alias []TokenType
 }
 
 const bufLen = 1024 // at least utf8.UTFMax
 
+func NewScanner(tokenset *Tokenset) *Scanner {
+	p := &Scanner{}
+	return p
+}
+
 type Scanner struct {
-	tokenset *TokenSet
+	tokenset *Tokenset
 
 	// Input
 	src io.Reader
@@ -69,6 +53,13 @@ type Scanner struct {
 	// One character look-ahead
 	ch rune // character before current srcPos
 
+	// Error is called for each error encountered. If no Error
+	// function is set, the error is reported to os.Stderr.
+	Error func(s *Scanner, msg string)
+
+	// ErrorCount is incremented by one for each error encountered.
+	errCount int
+
 	// Start position of most recently scanned token; set by Scan.
 	// Calling Init or Next invalidates the position (Line == 0).
 	// The Filename field is always left untouched by the Scanner.
@@ -77,18 +68,34 @@ type Scanner struct {
 	// position in that case, or to obtain the position immediately
 	// after the most recently scanned token.
 	Position
+
+	stack *stack
 }
 
-func (s *Scanner) Init(filename string, reader io.Reader, tokenset *TokenSet) {
+func (s *Scanner) Init(filename string, reader io.Reader, tokenset *Tokenset) {
 
 }
 
-func (s *Scanner) InitByText(text []byte, tokenset *TokenSet) {
+func (s *Scanner) InitByText(text []byte, tokenset *Tokenset) {
 
 }
 
 func (s *Scanner) Pos() Position {
 	return s.Position
+}
+
+//Push current position
+func (s *Scanner) Push() {
+	//s.stack.Push(s.Position)
+}
+
+func (s *Scanner) ErrorCount() int {
+	return s.errCount
+}
+
+//Pop last pushed position
+func (s *Scanner) Pop() (TokenPosition, error) {
+	return s.stack.Pop()
 }
 
 // next reads and returns the next Unicode character. It is designed such
@@ -206,7 +213,7 @@ func (s *Scanner) Peek() rune {
 }
 
 func (s *Scanner) error(msg string) {
-	s.ErrorCount++
+	s.errCount++
 	if s.Error != nil {
 		s.Error(s, msg)
 		return
@@ -216,4 +223,8 @@ func (s *Scanner) error(msg string) {
 		pos = s.Pos()
 	}
 	fmt.Fprintf(os.Stderr, "%s: %s\n", pos, msg)
+}
+
+func (s *Scanner) Scan() Token {
+	return Token{}
 }

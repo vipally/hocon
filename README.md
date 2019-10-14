@@ -17,8 +17,7 @@ hocon main project(JAVA): [https://github.com/lightbend/config](https://github.c
   - Comments, with `#` or `//`
   - Allow omitting the `{}` around a root object
   - Allow `=` as a synonym for `:`
-  - Allow omitting the `=` or `:` before a `{` so
-    `foo { a : 42 }`
+  - Allow omitting the `=` or `:` before a `{` so `foo { a : 42 }`
   - Allow omitting commas as long as there's a newline
   - Allow trailing commas after last element in objects and arrays
   - Allow unquoted strings for keys and values
@@ -30,8 +29,7 @@ hocon main project(JAVA): [https://github.com/lightbend/config](https://github.c
   - `include` feature merges root object in another file into
     current object, so `foo { include "bar.json" }` merges keys in
     `bar.json` into the object `foo`
-  - include with no file extension includes any of `.conf`,
-    `.json`, `.properties`
+  - include with no file extension includes any of `.conf`, `.json`, `.properties`
   - you can include files, URLs, or classpath resources; use
     `include url("http://example.com")` or `file()` or
     `classpath()` syntax to force the type, or use just `include
